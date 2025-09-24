@@ -58,11 +58,83 @@
 //   }
 // }
 
+// 'import { NextResponse } from 'next/server';
+// import nodemailer from 'nodemailer';
+
+// export async function POST(request: Request) {
+//   try {
+//     const formData = await request.formData();
+
+//     // Extract text fields and attachments
+//     const data: Record<string, string> = {};
+//     const attachments: { filename: string; content: Buffer }[] = [];
+
+//     for (const [key, value] of formData.entries()) {
+//       if (value instanceof File) {
+//         const buffer = Buffer.from(await value.arrayBuffer());
+//         attachments.push({
+//           filename: value.name,
+//           content: buffer,
+//         });
+//       } else {
+//         data[key] = value as string;
+//       }
+//     }
+
+//     // Validate required fields
+//     if (!data.name || !data.email || !data.phone || !data.role) {
+//       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+//     }
+
+//     // Format email body with all fields
+//     let body = `New contact submission from role: ${data.role}\n\n`;
+//     for (const key in data) {
+//       const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+//       body += `${label}: ${data[key]}\n`;
+//     }
+
+//     // Set up Nodemailer transporter with hardcoded credentials for local testing
+//     const transporter = nodemailer.createTransport({
+//       service: 'gmail',
+//       auth: {
+//         user: 'karanbhatt230803@gmail.com',
+//         pass: 'tqhkxvkqwzblanjc', // Your app-specific password
+//       },
+//     });
+
+//     // Send email
+//     await transporter.sendMail({
+//       from: 'karanbhatt230803@gmail.com',
+//       to: 'karanbhatt230803@gmail.com',
+//       subject: `New Contact: ${data.role} - ${data.name}`,
+//       text: body,
+//       attachments,
+//     });
+
+//     return NextResponse.json({ success: true });
+//   } catch (error) {
+//     console.error('Error sending email:', error);
+//     return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+//   }
+// }
+
+
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
+  // Declare headers outside the try-catch block
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow your frontend origin
+  headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS'); // Allow POST and OPTIONS methods
+  headers.set('Access-Control-Allow-Headers', 'Content-Type'); // Allow specific headers
+
   try {
+    // Handle preflight OPTIONS request
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, { status: 204, headers });
+    }
+
     const formData = await request.formData();
 
     // Extract text fields and attachments
@@ -83,7 +155,10 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!data.name || !data.email || !data.phone || !data.role) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400, headers }
+      );
     }
 
     // Format email body with all fields
@@ -111,9 +186,12 @@ export async function POST(request: Request) {
       attachments,
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { headers });
   } catch (error) {
     console.error('Error sending email:', error);
-    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to send email' },
+      { status: 500, headers }
+    );
   }
 }
