@@ -430,7 +430,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions accurately and professionally. Keep responses concise and direct.
+    const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions accurately and professionally. Keep responses concise and direct. Answer in the particular language which user asks. Answer in maximum 3-4 lines.
 
 Context:
 ${context}`;
