@@ -430,9 +430,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions accurately and professionally. Keep responses concise and direct. Answer in the particular language which user asks. Answer in maximum 3-4 lines.
+    const systemPrompt = `You are the CLUMOSS AI Assistant.
 
-Context:
+Your task:
+1. Use the following context to answer user queries accurately and professionally.
+2. Respond in the same language as the user's question.
+3. Supported languages: English (default), Arabic, Chinese, French, Japanese, German, Spanish, Russian, and Hindi.
+4. If the language cannot be confidently identified, answer in English.
+5. Keep answers concise and clear (maximum 3–4 lines).
+6. Maintain a polite, professional, and helpful tone.
+
 ${context}`;
 
     console.log('Calling OpenRouter API...');
