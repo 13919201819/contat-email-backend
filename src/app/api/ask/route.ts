@@ -457,7 +457,7 @@ ${context}`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: query },
         ],
-        temperature: 0.7,
+        temperature: 0.1,
         max_tokens: 500,
       }),
     });
