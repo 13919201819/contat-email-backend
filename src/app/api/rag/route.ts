@@ -1177,3 +1177,176 @@
 //     { status: 405 }
 //   );
 // }
+
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+interface HybridMatchResult {
+  id: number;
+  content: string;
+  similarity: number;
+  bm25_rank: number;
+  hybrid_score: number;
+}
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// ---------- CORS ----------
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
+}
+
+// ---------- MAIN POST ----------
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const query = body?.query;
+
+    if (!query || typeof query !== "string") {
+      return NextResponse.json(
+        { error: "Query must be a string" },
+        { status: 400 }
+      );
+    }
+
+    // 1️⃣ Generate embedding from OpenRouter
+    const embedRes = await fetch("https://openrouter.ai/api/v1/embeddings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "openai/text-embedding-3-small",
+        input: query,
+      }),
+    });
+
+    const embedJson = await embedRes.json();
+    console.log("EMBED JSON:", embedJson);
+
+    if (!embedJson?.data || !embedJson.data[0]?.embedding) {
+      return NextResponse.json(
+        {
+          response:
+            "Embedding generation failed. Please try again in a moment.",
+          details: embedJson,
+        },
+        { status: 500 }
+      );
+    }
+
+    const queryEmbedding = embedJson.data[0].embedding;
+
+    // 2️⃣ Hybrid vector + BM25 search
+    const { data: matchesRaw, error: matchError } = await supabase.rpc(
+      "hybrid_match_documents",
+      {
+        query_text: query,
+        query_embedding: queryEmbedding,
+        match_count: 10,
+      }
+    );
+
+    if (matchError) {
+      console.error("Supabase hybrid_match_documents error:", matchError);
+      return NextResponse.json(
+        { response: "Knowledge base search failed." },
+        { status: 500 }
+      );
+    }
+
+    const matches = (matchesRaw as HybridMatchResult[]) || [];
+    console.log("Matches:", matches);
+
+    const best = matches[0];
+    const similarityThreshold = 0.6; // Q&A chunks -> keep moderate
+    const isRelevant = best && best.similarity >= similarityThreshold;
+
+    // 3️⃣ If nothing relevant in KB → DO NOT CALL LLM, just say "not in KB"
+    if (!isRelevant) {
+      return NextResponse.json({
+        response:
+          "The CLUMOSS knowledge base does not contain an exact answer for this query.",
+      });
+    }
+
+    // Build context from top few matches
+    const context = matches
+      .slice(0, 6)
+      .map((m) => m.content)
+      .join("\n\n");
+
+    // 4️⃣ Call LLM STRICTLY with KB context ONLY
+    const systemPrompt = `
+You are the official CLUMOSS AI Assistant.
+
+You MUST follow these rules:
+- Use ONLY the information in the CONTEXT below.
+- Do NOT guess or invent any facts.
+- If the answer is not clearly present in the context, say:
+  "The CLUMOSS knowledge base does not contain this information."
+- Keep answers short (3–5 lines), clear, and professional.
+- Reply in the same language as the user.
+
+CONTEXT:
+${context}
+    `.trim();
+
+    const chatRes = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "nvidia/nemotron-nano-9b-v2:free",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: query },
+          ],
+          temperature: 0.1,
+          max_tokens: 300,
+        }),
+      }
+    );
+
+    const chatJson = await chatRes.json();
+    console.log("CHAT JSON:", chatJson);
+
+    const finalAnswer =
+      chatJson?.choices?.[0]?.message?.content?.trim() ||
+      "No response generated.";
+
+    return NextResponse.json({ response: finalAnswer });
+  } catch (err: unknown) {
+    console.error("RAG ERROR:", err);
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        details: err instanceof Error ? err.message : String(err) 
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// ---------- GET ----------
+export async function GET() {
+  return NextResponse.json(
+    { error: "Use POST instead." },
+    { status: 405 }
+  );
+}
