@@ -1,369 +1,369 @@
-// // import { NextResponse } from 'next/server';
-// // import fs from 'fs';
-// // import path from 'path';
+// import { NextResponse } from 'next/server';
+// import fs from 'fs';
+// import path from 'path';
 
-// // export async function POST(req: Request) {
-// //   console.log('API route /api/ask hit at', new Date().toISOString()); // Debug log
-// //   try {
-// //     const { query } = await req.json();
-// //     console.log('Received query:', query); // Debug log
+// export async function POST(req: Request) {
+//   console.log('API route /api/ask hit at', new Date().toISOString()); // Debug log
+//   try {
+//     const { query } = await req.json();
+//     console.log('Received query:', query); // Debug log
 
-// //     if (!query) {
-// //       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
-// //     }
+//     if (!query) {
+//       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
+//     }
 
-// //     const contextPath = path.join(process.cwd(), 'context.txt');
-// //     console.log('Looking for context at:', contextPath); // Debug log
-// //     let context = '';
-// //     if (fs.existsSync(contextPath)) {
-// //       context = fs.readFileSync(contextPath, 'utf8');
-// //       console.log('Context loaded successfully');
-// //     } else {
-// //       console.error('context.txt not found at:', contextPath);
-// //       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
-// //     }
+//     const contextPath = path.join(process.cwd(), 'context.txt');
+//     console.log('Looking for context at:', contextPath); // Debug log
+//     let context = '';
+//     if (fs.existsSync(contextPath)) {
+//       context = fs.readFileSync(contextPath, 'utf8');
+//       console.log('Context loaded successfully');
+//     } else {
+//       console.error('context.txt not found at:', contextPath);
+//       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
+//     }
 
-// //     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
+//     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
 
-// // Context:
-// // ${context}`;
+// Context:
+// ${context}`;
 
-// //     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-// //       method: 'POST',
-// //       headers: {
-// //         'Content-Type': 'application/json',
-// //         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-// //       },
-// //       body: JSON.stringify({
-// //         model: 'nvidia/nemotron-nano-9b-v2:free',
-// //         messages: [
-// //           { role: 'system', content: systemPrompt },
-// //           { role: 'user', content: query },
-// //         ],
-// //       }),
-// //     });
+//     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//       },
+//       body: JSON.stringify({
+//         model: 'nvidia/nemotron-nano-9b-v2:free',
+//         messages: [
+//           { role: 'system', content: systemPrompt },
+//           { role: 'user', content: query },
+//         ],
+//       }),
+//     });
 
-// //     if (!response.ok) {
-// //       throw new Error(`API request failed with status ${response.status}`);
-// //     }
+//     if (!response.ok) {
+//       throw new Error(`API request failed with status ${response.status}`);
+//     }
 
-// //     const data = await response.json();
-// //     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
-// //     console.log('AI response generated:', aiResponse); // Debug log
+//     const data = await response.json();
+//     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
+//     console.log('AI response generated:', aiResponse); // Debug log
 
-// //     return NextResponse.json({ response: aiResponse }, { status: 200 });
-// //   } catch (error) {
-// //     console.error('API route error:', error);
-// //     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-// //   }
-// // }
+//     return NextResponse.json({ response: aiResponse }, { status: 200 });
+//   } catch (error) {
+//     console.error('API route error:', error);
+//     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+//   }
+// }
 
-// // export function GET() {
-// //   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
-// // }
-
-
+// export function GET() {
+//   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
+// }
 
 
 
 
-// // import { NextResponse } from 'next/server';
-// // import fs from 'fs';
-// // import path from 'path';
-
-// // export async function POST(req: Request) {
-// //   console.log('API route /api/ask hit at', new Date().toISOString(), 'with headers:', Object.fromEntries(req.headers));
-// //   try {
-// //     const { query } = await req.json();
-// //     console.log('Received query:', query);
-
-// //     if (!query) {
-// //       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
-// //     }
-
-// //     const contextPath = path.join(process.cwd(), 'context.txt');
-// //     console.log('Looking for context at:', contextPath);
-// //     let context = '';
-// //     if (fs.existsSync(contextPath)) {
-// //       context = fs.readFileSync(contextPath, 'utf8');
-// //       console.log('Context loaded successfully');
-// //     } else {
-// //       console.error('context.txt not found at:', contextPath);
-// //       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
-// //     }
-
-// //     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
-
-// // Context:
-// // ${context}`;
-
-// //     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-// //       method: 'POST',
-// //       headers: {
-// //         'Content-Type': 'application/json',
-// //         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-// //       },
-// //       body: JSON.stringify({
-// //         model: 'nvidia/nemotron-nano-9b-v2:free',
-// //         messages: [
-// //           { role: 'system', content: systemPrompt },
-// //           { role: 'user', content: query },
-// //         ],
-// //       }),
-// //     });
-
-// //     if (!response.ok) {
-// //       const errorText = await response.text();
-// //       console.error('OpenRouter API failed:', { status: response.status, body: errorText });
-// //       throw new Error(`API request failed with status ${response.status}: ${errorText}`);
-// //     }
-
-// //     const data = await response.json();
-// //     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
-// //     console.log('AI response generated:', aiResponse);
-
-// //     return NextResponse.json({ response: aiResponse }, {
-// //       status: 200,
-// //       headers: {
-// //         'Access-Control-Allow-Origin': '*', // Temporary wildcard for testing
-// //         'Access-Control-Allow-Methods': 'POST',
-// //         'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //       },
-// //     });
-// //   } catch (error) {
-// //     console.error('API route error:', { message: error.message, stack: error.stack });
-// //     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-// //   }
-// // }
-
-// // export function GET() {
-// //   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
-// // }
 
 
+// import { NextResponse } from 'next/server';
+// import fs from 'fs';
+// import path from 'path';
 
-// // import { NextResponse } from 'next/server';
-// // import fs from 'fs';
-// // import path from 'path';
+// export async function POST(req: Request) {
+//   console.log('API route /api/ask hit at', new Date().toISOString(), 'with headers:', Object.fromEntries(req.headers));
+//   try {
+//     const { query } = await req.json();
+//     console.log('Received query:', query);
 
-// // export async function POST(req: Request) {
-// //   console.log('API route /api/ask hit at', new Date().toISOString(), 'with headers:', Object.fromEntries(req.headers));
-// //   try {
-// //     const { query } = await req.json();
-// //     console.log('Received query:', query);
+//     if (!query) {
+//       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
+//     }
 
-// //     if (!query) {
-// //       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
-// //     }
+//     const contextPath = path.join(process.cwd(), 'context.txt');
+//     console.log('Looking for context at:', contextPath);
+//     let context = '';
+//     if (fs.existsSync(contextPath)) {
+//       context = fs.readFileSync(contextPath, 'utf8');
+//       console.log('Context loaded successfully');
+//     } else {
+//       console.error('context.txt not found at:', contextPath);
+//       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
+//     }
 
-// //     const contextPath = path.join(process.cwd(), 'context.txt');
-// //     console.log('Looking for context at:', contextPath);
-// //     let context = '';
-// //     if (fs.existsSync(contextPath)) {
-// //       context = fs.readFileSync(contextPath, 'utf8');
-// //       console.log('Context loaded successfully');
-// //     } else {
-// //       console.error('context.txt not found at:', contextPath);
-// //       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
-// //     }
+//     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
 
-// //     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
+// Context:
+// ${context}`;
 
-// // Context:
-// // ${context}`;
+//     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//       },
+//       body: JSON.stringify({
+//         model: 'nvidia/nemotron-nano-9b-v2:free',
+//         messages: [
+//           { role: 'system', content: systemPrompt },
+//           { role: 'user', content: query },
+//         ],
+//       }),
+//     });
 
-// //     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-// //       method: 'POST',
-// //       headers: {
-// //         'Content-Type': 'application/json',
-// //         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-// //       },
-// //       body: JSON.stringify({
-// //         model: 'nvidia/nemotron-nano-9b-v2:free',
-// //         messages: [
-// //           { role: 'system', content: systemPrompt },
-// //           { role: 'user', content: query },
-// //         ],
-// //       }),
-// //     });
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error('OpenRouter API failed:', { status: response.status, body: errorText });
+//       throw new Error(`API request failed with status ${response.status}: ${errorText}`);
+//     }
 
-// //     if (!response.ok) {
-// //       const errorText = await response.text();
-// //       console.error('OpenRouter API failed:', { status: response.status, body: errorText });
-// //       throw new Error(`API request failed with status ${response.status}: ${errorText}`);
-// //     }
+//     const data = await response.json();
+//     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
+//     console.log('AI response generated:', aiResponse);
 
-// //     const data = await response.json();
-// //     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
-// //     console.log('AI response generated:', aiResponse);
+//     return NextResponse.json({ response: aiResponse }, {
+//       status: 200,
+//       headers: {
+//         'Access-Control-Allow-Origin': '*', // Temporary wildcard for testing
+//         'Access-Control-Allow-Methods': 'POST',
+//         'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//       },
+//     });
+//   } catch (error) {
+//     console.error('API route error:', { message: error.message, stack: error.stack });
+//     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+//   }
+// }
 
-// //     return NextResponse.json({ response: aiResponse }, {
-// //       status: 200,
-// //       headers: {
-// //         'Access-Control-Allow-Origin': '*', // Allow all origins
-// //         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', // Explicitly allow methods
-// //         'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
-// //       },
-// //     });
-// //   } catch (error) {
-// //     console.error('API route error:', { message: error.message, stack: error.stack });
-// //     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-// //   }
-// // }
-
-// // export function OPTIONS() {
-// //   return NextResponse.json({}, {
-// //     status: 200,
-// //     headers: {
-// //       'Access-Control-Allow-Origin': '*',
-// //       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //       'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
-// //     },
-// //   });
-// // }
-
-// // export function GET() {
-// //   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
-// // }
+// export function GET() {
+//   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
+// }
 
 
 
-// // import { NextResponse } from 'next/server';
-// // import fs from 'fs';
-// // import path from 'path';
+// import { NextResponse } from 'next/server';
+// import fs from 'fs';
+// import path from 'path';
 
-// // // Handle CORS preflight
-// // export async function OPTIONS() {
-// //   return new NextResponse(null, {
-// //     status: 200,
-// //     headers: {
-// //       'Access-Control-Allow-Origin': '*',
-// //       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-// //       'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
-// //       'Access-Control-Max-Age': '86400',
-// //     },
-// //   });
-// // }
+// export async function POST(req: Request) {
+//   console.log('API route /api/ask hit at', new Date().toISOString(), 'with headers:', Object.fromEntries(req.headers));
+//   try {
+//     const { query } = await req.json();
+//     console.log('Received query:', query);
 
-// // export async function POST(req: Request) {
-// //   console.log('=== API ROUTE HIT ===');
-// //   console.log('Time:', new Date().toISOString());
-// //   console.log('Origin:', req.headers.get('origin'));
+//     if (!query) {
+//       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
+//     }
+
+//     const contextPath = path.join(process.cwd(), 'context.txt');
+//     console.log('Looking for context at:', contextPath);
+//     let context = '';
+//     if (fs.existsSync(contextPath)) {
+//       context = fs.readFileSync(contextPath, 'utf8');
+//       console.log('Context loaded successfully');
+//     } else {
+//       console.error('context.txt not found at:', contextPath);
+//       return NextResponse.json({ error: 'Knowledge base not available' }, { status: 500 });
+//     }
+
+//     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions relevantly and accurately. If the query is not related to the context, politely redirect to topics about CLUMOSS.
+
+// Context:
+// ${context}`;
+
+//     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//       },
+//       body: JSON.stringify({
+//         model: 'nvidia/nemotron-nano-9b-v2:free',
+//         messages: [
+//           { role: 'system', content: systemPrompt },
+//           { role: 'user', content: query },
+//         ],
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error('OpenRouter API failed:', { status: response.status, body: errorText });
+//       throw new Error(`API request failed with status ${response.status}: ${errorText}`);
+//     }
+
+//     const data = await response.json();
+//     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
+//     console.log('AI response generated:', aiResponse);
+
+//     return NextResponse.json({ response: aiResponse }, {
+//       status: 200,
+//       headers: {
+//         'Access-Control-Allow-Origin': '*', // Allow all origins
+//         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', // Explicitly allow methods
+//         'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+//       },
+//     });
+//   } catch (error) {
+//     console.error('API route error:', { message: error.message, stack: error.stack });
+//     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+//   }
+// }
+
+// export function OPTIONS() {
+//   return NextResponse.json({}, {
+//     status: 200,
+//     headers: {
+//       'Access-Control-Allow-Origin': '*',
+//       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//       'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+//     },
+//   });
+// }
+
+// export function GET() {
+//   return NextResponse.json({ error: 'Method not allowed. Use POST.' }, { status: 405 });
+// }
+
+
+
+// import { NextResponse } from 'next/server';
+// import fs from 'fs';
+// import path from 'path';
+
+// // Handle CORS preflight
+// export async function OPTIONS() {
+//   return new NextResponse(null, {
+//     status: 200,
+//     headers: {
+//       'Access-Control-Allow-Origin': '*',
+//       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+//       'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
+//       'Access-Control-Max-Age': '86400',
+//     },
+//   });
+// }
+
+// export async function POST(req: Request) {
+//   console.log('=== API ROUTE HIT ===');
+//   console.log('Time:', new Date().toISOString());
+//   console.log('Origin:', req.headers.get('origin'));
   
-// //   try {
-// //     const { query } = await req.json();
-// //     console.log('Query received:', query);
+//   try {
+//     const { query } = await req.json();
+//     console.log('Query received:', query);
 
-// //     if (!query) {
-// //       return NextResponse.json(
-// //         { error: 'Query is required' },
-// //         { 
-// //           status: 400,
-// //           headers: {
-// //             'Access-Control-Allow-Origin': '*',
-// //             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //             'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //           },
-// //         }
-// //       );
-// //     }
+//     if (!query) {
+//       return NextResponse.json(
+//         { error: 'Query is required' },
+//         { 
+//           status: 400,
+//           headers: {
+//             'Access-Control-Allow-Origin': '*',
+//             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//             'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//           },
+//         }
+//       );
+//     }
 
-// //     const contextPath = path.join(process.cwd(), 'context.txt');
-// //     console.log('Context path:', contextPath);
+//     const contextPath = path.join(process.cwd(), 'context.txt');
+//     console.log('Context path:', contextPath);
     
-// //     let context = '';
-// //     if (fs.existsSync(contextPath)) {
-// //       context = fs.readFileSync(contextPath, 'utf8');
-// //       console.log('Context loaded, length:', context.length);
-// //     } else {
-// //       console.error('context.txt not found!');
-// //       return NextResponse.json(
-// //         { error: 'Knowledge base not available' },
-// //         { 
-// //           status: 500,
-// //           headers: {
-// //             'Access-Control-Allow-Origin': '*',
-// //             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //             'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //           },
-// //         }
-// //       );
-// //     }
+//     let context = '';
+//     if (fs.existsSync(contextPath)) {
+//       context = fs.readFileSync(contextPath, 'utf8');
+//       console.log('Context loaded, length:', context.length);
+//     } else {
+//       console.error('context.txt not found!');
+//       return NextResponse.json(
+//         { error: 'Knowledge base not available' },
+//         { 
+//           status: 500,
+//           headers: {
+//             'Access-Control-Allow-Origin': '*',
+//             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//             'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//           },
+//         }
+//       );
+//     }
 
-// //     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions accurately and professionally. Keep responses concise and direct.
+//     const systemPrompt = `You are the CLUMOSS AI Assistant. Use the following context to answer user questions accurately and professionally. Keep responses concise and direct.
 
-// // Context:
-// // ${context}`;
+// Context:
+// ${context}`;
 
-// //     console.log('Calling OpenRouter API...');
-// //     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-// //       method: 'POST',
-// //       headers: {
-// //         'Content-Type': 'application/json',
-// //         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-// //       },
-// //       body: JSON.stringify({
-// //         model: 'nvidia/nemotron-nano-9b-v2:free',
-// //         messages: [
-// //           { role: 'system', content: systemPrompt },
-// //           { role: 'user', content: query },
-// //         ],
-// //       }),
-// //     });
+//     console.log('Calling OpenRouter API...');
+//     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//       },
+//       body: JSON.stringify({
+//         model: 'nvidia/nemotron-nano-9b-v2:free',
+//         messages: [
+//           { role: 'system', content: systemPrompt },
+//           { role: 'user', content: query },
+//         ],
+//       }),
+//     });
 
-// //     if (!response.ok) {
-// //       const errorText = await response.text();
-// //       console.error('OpenRouter error:', response.status, errorText);
-// //       throw new Error(`API failed: ${response.status}`);
-// //     }
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error('OpenRouter error:', response.status, errorText);
+//       throw new Error(`API failed: ${response.status}`);
+//     }
 
-// //     const data = await response.json();
-// //     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
-// //     console.log('AI Response generated:', aiResponse.substring(0, 100) + '...');
+//     const data = await response.json();
+//     const aiResponse = data.choices[0]?.message?.content?.trim() || 'No response generated';
+//     console.log('AI Response generated:', aiResponse.substring(0, 100) + '...');
 
-// //     return NextResponse.json(
-// //       { response: aiResponse },
-// //       {
-// //         status: 200,
-// //         headers: {
-// //           'Access-Control-Allow-Origin': '*',
-// //           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //           'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //         },
-// //       }
-// //     );
-// //   } catch (error: any) {
-// //     console.error('=== ERROR ===');
-// //     console.error('Message:', error.message);
-// //     console.error('Stack:', error.stack);
+//     return NextResponse.json(
+//       { response: aiResponse },
+//       {
+//         status: 200,
+//         headers: {
+//           'Access-Control-Allow-Origin': '*',
+//           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//           'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//         },
+//       }
+//     );
+//   } catch (error: any) {
+//     console.error('=== ERROR ===');
+//     console.error('Message:', error.message);
+//     console.error('Stack:', error.stack);
     
-// //     return NextResponse.json(
-// //       { error: 'Internal server error', details: error.message },
-// //       { 
-// //         status: 500,
-// //         headers: {
-// //           'Access-Control-Allow-Origin': '*',
-// //           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //           'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //         },
-// //       }
-// //     );
-// //   }
-// // }
+//     return NextResponse.json(
+//       { error: 'Internal server error', details: error.message },
+//       { 
+//         status: 500,
+//         headers: {
+//           'Access-Control-Allow-Origin': '*',
+//           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//           'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//         },
+//       }
+//     );
+//   }
+// }
 
-// // export async function GET() {
-// //   return NextResponse.json(
-// //     { error: 'Method not allowed. Use POST.' },
-// //     { 
-// //       status: 405,
-// //       headers: {
-// //         'Access-Control-Allow-Origin': '*',
-// //         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-// //         'Access-Control-Allow-Headers': 'Content-Type, Accept',
-// //       },
-// //     }
-// //   );
-// // }
+// export async function GET() {
+//   return NextResponse.json(
+//     { error: 'Method not allowed. Use POST.' },
+//     { 
+//       status: 405,
+//       headers: {
+//         'Access-Control-Allow-Origin': '*',
+//         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+//         'Access-Control-Allow-Headers': 'Content-Type, Accept',
+//       },
+//     }
+//   );
+// }
 
 
 
@@ -534,237 +534,215 @@
 
 
 
-
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-export const runtime = 'nodejs';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
-};
-
+// Handle CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
+      'Access-Control-Max-Age': '86400',
+    },
   });
 }
 
 export async function POST(req: Request) {
   console.log('=== API ROUTE HIT ===');
-
+  console.log('Time:', new Date().toISOString());
+  console.log('Origin:', req.headers.get('origin'));
+  
   try {
-    const apiKey = process.env.OPENROUTER_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'OpenRouter API key is missing' },
-        { status: 500, headers: corsHeaders }
-      );
-    }
-
     const body = await req.json();
     const { query } = body as { query?: string };
+    console.log('Query received:', query);
 
-    if (!query || typeof query !== 'string' || !query.trim()) {
+    if (!query || typeof query !== 'string') {
       return NextResponse.json(
-        { error: 'Query is required' },
-        { status: 400, headers: corsHeaders }
+        { error: 'Query is required and must be a string' },
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Accept',
+          },
+        }
       );
     }
 
-    // Load knowledge base
     const contextPath = path.join(process.cwd(), 'context.txt');
-
-    if (!fs.existsSync(contextPath)) {
+    console.log('Context path:', contextPath);
+    
+    let context = '';
+    if (fs.existsSync(contextPath)) {
+      context = fs.readFileSync(contextPath, 'utf8');
+      console.log('Context loaded, length:', context.length);
+    } else {
+      console.error('context.txt not found!');
       return NextResponse.json(
         { error: 'Knowledge base not available' },
-        { status: 500, headers: corsHeaders }
+        { 
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Accept',
+          },
+        }
       );
     }
-
-    const context = fs.readFileSync(contextPath, 'utf8');
 
     const systemPrompt = `You are the CLUMOSS AI Assistant.
 
 Your task:
-1. Use the following context to answer accurately.
+1. Use the following context to answer user queries accurately and professionally.
 2. Respond in the same language as the user's question.
-3. Supported languages: English, Arabic, Chinese, French, Japanese, German, Spanish, Russian and Hindi.
-4. If language cannot be identified, answer in English.
+3. Supported languages: English (default), Arabic, Chinese, French, Japanese, German, Spanish, Russian, and Hindi.
+4. If the language cannot be confidently identified, answer in English.
 5. Keep answers concise and clear (maximum 3–4 lines).
-6. Maintain a polite, professional and helpful tone.
-7. If information is unavailable in the context, say so. Never invent company information.
+6. Maintain a polite, professional, and helpful tone.
 
-Knowledge Base:
 ${context}`;
 
-    console.log('Calling OpenRouter with streaming enabled...');
+    console.log('Calling OpenRouter API...');
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://clumoss.com',
+        'X-Title': 'CLUMOSS AI Assistant',
+      },
+      body: JSON.stringify({
+        model: 'nvidia/nemotron-3.5-lightning:free',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: query },
+        ],
+        temperature: 0.1,
+        max_tokens: 1000,
+        reasoning: {"enabled": true},
+        stream: true
+      }),
+    });
 
-    const upstream = await fetch(
-      'https://openrouter.ai/api/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': 'https://clumoss.com',
-          'X-Title': 'CLUMOSS AI Assistant',
-        },
-        body: JSON.stringify({
-          model: 'nvidia/nemotron-3.5-lightning:free',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: query },
-          ],
-          temperature: 0.1,
-          max_tokens: 1000,
-          stream: true,
-        }),
-      }
-    );
-
-    if (!upstream.ok) {
-      const errorText = await upstream.text();
-
-      console.error(
-        'OpenRouter error:',
-        upstream.status,
-        errorText
-      );
-
-      return NextResponse.json(
-        {
-          error: 'OpenRouter API request failed',
-          details: errorText,
-        },
-        {
-          status: 502,
-          headers: corsHeaders,
-        }
-      );
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenRouter error:', response.status, errorText);
+      throw new Error(`API failed: ${response.status}`);
     }
 
-    if (!upstream.body) {
-      throw new Error('OpenRouter returned an empty response stream');
+    if (!response.body) {
+      throw new Error('No response body from OpenRouter');
     }
 
-    // Forward the SSE stream to the frontend
+    const upstream = response.body.getReader();
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+
     const stream = new ReadableStream({
       async start(controller) {
-        const reader = upstream.body!.getReader();
-        const decoder = new TextDecoder();
-
         let buffer = '';
-
+        let fullResponse = '';
         try {
           while (true) {
-            const { done, value } = await reader.read();
+            const { done, value } = await upstream.read();
+            if (done) break;
 
-            buffer += decoder.decode(value || new Uint8Array(), {
-              stream: !done,
-            });
-
-            // Process complete SSE lines
+            buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
+            buffer = lines.pop() || ''; // keep incomplete line for next chunk
 
             for (const line of lines) {
-              if (!line.startsWith('data:')) continue;
+              const trimmed = line.trim();
+              // skips SSE comments like ": OPENROUTER PROCESSING"
+              if (!trimmed.startsWith('data:')) continue;
 
-              const payload = line.slice(5).trim();
-
-              if (!payload) continue;
-
-              if (payload === '[DONE]') {
-                controller.enqueue(
-                  new TextEncoder().encode('data: [DONE]\n\n')
-                );
-                continue;
-              }
+              const payload = trimmed.slice(5).trim();
+              if (payload === '[DONE]') continue;
 
               try {
-                const parsed = JSON.parse(payload);
-
-                const token =
-                  parsed.choices?.[0]?.delta?.content;
-
-                if (typeof token === 'string' && token.length > 0) {
-                  const event = `data: ${JSON.stringify({
-                    token,
-                  })}\n\n`;
-
-                  controller.enqueue(
-                    new TextEncoder().encode(event)
-                  );
+                const json = JSON.parse(payload);
+                // only forward the final answer (reasoning is sent separately in delta.reasoning)
+                const token = json.choices?.[0]?.delta?.content;
+                if (token) {
+                  fullResponse += token;
+                  controller.enqueue(encoder.encode(token));
                 }
-              } catch (error) {
-                console.error('SSE parsing error:', error);
+              } catch {
+                // ignore partial/invalid JSON lines
               }
             }
-
-            if (done) break;
           }
 
-          controller.close();
-        } catch (error) {
-          console.error('Stream error:', error);
-
-          controller.enqueue(
-            new TextEncoder().encode(
-              `data: ${JSON.stringify({
-                error: 'AI response stream interrupted',
-              })}\n\n`
-            )
-          );
-
-          controller.close();
+          if (!fullResponse.trim()) {
+            controller.enqueue(encoder.encode('No response generated'));
+          }
+          console.log('AI Response generated:', fullResponse.substring(0, 100) + '...');
+        } catch (err) {
+          console.error('Stream error:', err);
         } finally {
-          reader.releaseLock();
+          controller.close();
         }
+      },
+      cancel() {
+        upstream.cancel();
       },
     });
 
     return new Response(stream, {
       status: 200,
       headers: {
-        ...corsHeaders,
-        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache, no-transform',
-        'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept',
       },
     });
-
   } catch (error) {
-    console.error('=== ERROR ===', error);
-
+    console.error('=== ERROR ===');
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    console.error('Message:', errorMessage);
+    if (errorStack) {
+      console.error('Stack:', errorStack);
+    }
+    
     return NextResponse.json(
-      {
-        error: 'Internal server error',
-        details:
-          error instanceof Error
-            ? error.message
-            : 'Unknown error',
-      },
-      {
+      { error: 'Internal server error', details: errorMessage },
+      { 
         status: 500,
-        headers: corsHeaders,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Accept',
+        },
       }
     );
   }
 }
 
+//comment
+
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed. Use POST.' },
-    {
+    { 
       status: 405,
-      headers: corsHeaders,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      },
     }
   );
 }
+
