@@ -452,13 +452,14 @@ ${context}`;
         'X-Title': 'CLUMOSS AI Assistant',
       },
       body: JSON.stringify({
-        model: 'nvidia/nemotron-nano-9b-v2:free',
+        model: 'nvidia/nemotron-3.5-lightning:free',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: query },
         ],
         temperature: 0.1,
-        max_tokens: 500,
+        max_tokens: 1000,
+        stream: true
       }),
     });
 
