@@ -292,6 +292,7 @@
 import { NextResponse } from 'next/server';
 import { google, calendar_v3 } from 'googleapis';
 import nodemailer from 'nodemailer';
+import { DateTime } from "luxon";
 
 // Handle CORS preflight requests
 export async function OPTIONS() {
@@ -339,19 +340,35 @@ export async function POST(req: Request) {
 
     // 2️⃣ Create date-time in user's timezone
     // Input: date="2024-11-15", time="14:00" (24-hour format)
-    const dateTimeString = `${date}T${time}:00`;
-    const userDateTime = new Date(dateTimeString);
+    // const dateTimeString = `${date}T${time}:00`;
+    // const userDateTime = new Date(dateTimeString);
     
-    // Add 1 hour for end time
-    const endDateTime = new Date(userDateTime.getTime() + 60 * 60 * 1000);
+    // // Add 1 hour for end time
+    // const endDateTime = new Date(userDateTime.getTime() + 60 * 60 * 1000);
     
-    // Convert to ISO format
-    const startISO = userDateTime.toISOString();
-    const endISO = endDateTime.toISOString();
+    // // Convert to ISO format
+    // const startISO = userDateTime.toISOString();
+    // const endISO = endDateTime.toISOString();
+
+    const start = DateTime.fromISO(`${date}T${time}`, {
+      zone: timezone,
+    });
+
+    if (!start.isValid) {
+      throw new Error(
+        `Invalid date, time, or timezone: ${start.invalidReason}`
+      );
+    }
+
+    const end = start.plus({ hours: 1 });
+
+    const startISO = start.toISO({ suppressMilliseconds: true })!;
+    const endISO = end.toISO({ suppressMilliseconds: true })!;
 
     console.log('🕐 Time conversion:', {
       input: { date, time, timezone },
-      dateTimeString,
+      // dateTimeString,
+      startDateTime: start.toString(),
       startISO,
       endISO
     });
@@ -381,7 +398,7 @@ ${message || 'No message provided'}
       },
       attendees: [
         { email: email },
-        { email: process.env.HOST_EMAIL || '' },
+        // { email: process.env.HOST_EMAIL || '' },
       ],
       conferenceData: {
         createRequest: {
@@ -406,6 +423,19 @@ ${message || 'No message provided'}
       requestBody: event,
       conferenceDataVersion: 1,
       sendUpdates: 'all',
+    });
+
+
+    // Google Calendar invitation diagnostics
+    console.log("📅 Calendar invitation diagnostics:", {
+      eventId: insertResponse.data.id,
+      status: insertResponse.data.status,
+      organizer: insertResponse.data.organizer?.email,
+      attendees: insertResponse.data.attendees?.map((attendee) => ({
+        email: attendee.email,
+        responseStatus: attendee.responseStatus,
+      })),
+      meetLink: insertResponse.data.hangoutLink,
     });
 
     const meetLink = insertResponse.data.hangoutLink || 'Meet link not generated';
@@ -451,8 +481,9 @@ ${message || 'No message provided'}
 
     // Email to Client
     try {
-      await transporter.sendMail({
-        from: `"Demo Scheduler" <${process.env.SMTP_EMAIL}>`,
+      // await transporter.sendMail({
+      const clientMailInfo = await transporter.sendMail({
+        from: `"CLUMOSS" <${process.env.SMTP_EMAIL}>`,
         to: email,
         subject: '✅ Your Demo is Confirmed!',
         html: `
@@ -525,6 +556,13 @@ ${message || 'No message provided'}
         `,
       });
 
+      console.log("📧 Client email diagnostics:", {
+        messageId: clientMailInfo.messageId,
+        accepted: clientMailInfo.accepted,
+        rejected: clientMailInfo.rejected,
+        response: clientMailInfo.response,
+      });
+
       console.log('✅ Client email sent');
     } catch (emailError) {
       console.error('❌ Error sending client email:', emailError);
@@ -532,8 +570,9 @@ ${message || 'No message provided'}
 
     // Email to Host
     try {
-      await transporter.sendMail({
-        from: `"Demo Scheduler" <${process.env.SMTP_EMAIL}>`,
+      // await transporter.sendMail({
+      const hostMailInfo = await transporter.sendMail({
+        from: `"CLUMOSS" <${process.env.SMTP_EMAIL}>`,
         to: process.env.HOST_EMAIL,
         subject: `📅 New Demo Booking: ${name} from ${company || 'N/A'}`,
         html: `
@@ -599,6 +638,13 @@ ${message || 'No message provided'}
 </body>
 </html>
         `,
+      });
+
+      console.log("📧 Host email diagnostics:", {
+        messageId: hostMailInfo.messageId,
+        accepted: hostMailInfo.accepted,
+        rejected: hostMailInfo.rejected,
+        response: hostMailInfo.response,
       });
 
       console.log('✅ Host email sent');
