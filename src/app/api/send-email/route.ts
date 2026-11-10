@@ -346,16 +346,16 @@ export async function POST(request: Request) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'karanbhatt230803@gmail.com', 
-        pass: 'tqhkxvkqwzblanjc', 
+        user: process.env.SMTP_EMAIL, 
+        pass: process.env.SMTP_PASSWORD, 
       },
     });
 
     // 3. SEND EMAIL LOGIC (Corrected)
     await transporter.sendMail({
-      from: '"CLUMOSS Website" <karanbhatt230803@gmail.com>', // Must be your authenticated email
+      from: '"CLUMOSS Website" ${process.env.SMTP_EMAIL}', // Must be your authenticated email
       
-      to: 'karanbhatt230803@gmail.com', // SEND TO YOURSELF
+      to: process.env.SMTP_EMAIL, // SEND TO YOURSELF
       
       replyTo: data.email, // IMPORTANT: When you click "Reply" in Gmail, it will go to the Client
       
